@@ -6,47 +6,46 @@
 class archive
 {
 public:
-	void take(string zip, string input, string *output);
-
+void take(string zip, string input, string *output);
 private:
-	void archiving(string input, string *output);
-	void unpack(string input, string *output);
+void archiving(string input, string *output);
+void unpack(string input, string *output);
 };
 
 using namespace std;
 
 void archive::take(string zip, string input, string *output)
 {
-	if(zip=="compress ")
-		archiving(input, output);
-	else
-		unpack(input, output);
+if(zip=="compress ")
+archiving(input, output);
+else
+unpack(input, output);
 }
 void archive::archiving(string input, string *output)
 {
-	ifstream open(input);
+ifstream open(input);
 
-	open.close();
+open.close();
 
-	ifstream write(*output);
+ofstream write(*output);
 
-	write.close();
+write.close();
 }
 void archive::unpack(string input, string *output)
 {
-	ifstream open(input);
+ifstream open(input);
 
-	open.close();
+open.close();
 
-	ifstream write(*output);
-
-	write.close();
+ofstream write(*output);
+write << "kyky";
+write.close();
 }
 
 int main()
 {
-	archive A;
-	string zip, input, *output;
-	cin >> zip >> input >> *output;
-	A.take(zip, input, output);
+archive A;
+string zip, input, *output;
+cin >> zip >> input >> *output;
+A.take(zip, input, output);
 }
