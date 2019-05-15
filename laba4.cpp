@@ -80,10 +80,35 @@ debit(c, output);
 }
 void archive::unpack(string input, string output)
 {
-string b;
+int i=0,j,g=4,p=0, s=16;
+string b, c, *t;
+t = new string[s];
 b = bit(input);
-
-debit(b, output);
+while (j < b.size())
+{
+	for(int z=0;z<g;z++)
+		p=p*2+b[j+z];
+	j=j+g;
+	p--;
+	if (p>-1)
+	{
+		for(int z=0; z<t[p].size();z++)
+		t[i]+=t[p][z];
+	}
+	for(int z=j;z<j+BITS_PER_BYTE;z++)
+	t[i]+=b[z];
+	for(int z=0;z<t[i].size();z++)
+	c+=t[i][z];
+	j=j+BITS_PER_BYTE;
+	i++;
+	if (i == s)
+	{
+	t = resize(t, s);
+	g=g+1;
+	s = s * 2;
+	}
+}
+debit(c, output);
 }
 string archive::bit(string input)
 {
