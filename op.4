@@ -1,51 +1,248 @@
-#include "pch.h"
 #include <iostream>
-#include<string>
-#include<fstream>
+#include <string>
+#include <fstream>
+#include <bitset>
+#include <limits>
 
 using namespace std;
+using byte = unsigned char;
+using bits_in_byte = bitset<size_t(8)>;
+constexpr std::size_t BITS_PER_BYTE = std::numeric_limits<byte>::digits;
 
 class archive
 {
 public:
-	void take(string zip, string input, string output);
+	void take(string zip, string input, string output1, string output2);
 private:
-	void archiving(string input, string output);
-	void unpack(string input, string output);
+	void archiving(string input, string output1, string output2);
+	void unpack(string input, string output1, string output2);
+	string bit(string input);
+	void debit(string c, string output);
+	string* resize(string *f, int d);
 };
-
-void archive::take(string zip, string input, string output)
+void archive::take(string zip, string input, string output1, string output2)
 {
-	if (zip == "compress ")
-		archiving(input, output);
-	else
-		unpack(input, output);
+	if (zip == "--compress")
+		archiving(input, output1, output2);
+	if (zip == "--decompress")
+		unpack(input, output1, output2);
 }
-void archive::archiving(string input, string output)
+void archive::archiving(string input, string output1, string output2)
 {
+	int u, sd;
+	string c, k;
+	for (int x = 0; x < 2; x++)
+	{
+		int i = 0, j = 0, lg, k = 0, g = 4, s = 16, h, q = 0, r = 0, p;
+		string b, *t;
+		t = new string[s];
+		if (x == 0)
+			b = bit(input);
+		else
+			b = bit(output1);
+		q = b.size();
+		while (j < q)
+		{
+			for (k = i - 1; k > -1; k--)
+			{
+				string d;
+				lg = t[k].size();
+				for (int z = j; z < j + lg && (z < q); z++)
+					d += b[z];
+				if (d == t[k])
+					break;
+			}
+			if (k == -1)
+				lg = 0;
+			for (int z = j; z < j + lg + BITS_PER_BYTE && z < q; z++)
+				t[i] += b[z];
+			k++;
+			for (int z = 0; z < g; z++)
+			{
+				h = k % 2;
+				k = k / 2;
+				if (h == 1)
+					c += '1';
+				else
+					c += '0';
+			}
+			for (int z = j + lg; z < j + lg + BITS_PER_BYTE && (z < q); z++)
+			{
+				c += b[z];
+			}
+			j = j + lg + BITS_PER_BYTE;
+			i++;
+			if (i == s)
+			{
+				t = resize(t, s);
+				g = g + 1;
+				s = s * 2;
+			}
+		}
+		if (x == 0)
+		{
+			u = c.size();
+			cout << u;
+		}
+	}
+	u+=32;
+	for (int z = 0; z < 32; z++)
+	{
+		sd = u % 2;
+		u = u / 2;
+		if (sd == 1)
+			k += '1';
+		else
+			k += '0';
+	}
+	for (int z = 0; z < c.size(); z++)
+		k += c[z];
+	debit(k, output2);
+}
+void archive::unpack(string input, string output1, string output2)
+{
+	int i = 0, j = 0, g = 4, s = 16;
+	long int p = 0, r = 0;
+	string b, c, h, *t;
+	cout << "s: " << s << endl;
+	t = new string[s];
+	b = bit(input);
+	cout << "b size: " << b.size() << endl;
+	cout << "jfjy";
+	for (int z = 0, k = 1; z < 32; z++)
+	{
+		int g = b[z] - '0';
+		r = r + g * k;
+		k = k * 2;
+	}
+	j += 32;
+	cout << r << " " << j << " ";
+	while (j < r)
+	{
+		if (r - j < g)
+			break;
+		for (int z = 0, k = 1; z < g; z++)
+		{
+			int g = b[j + z] - '0';
+			p = p + g * k;
+			k = k * 2;
+		}
+		j = j + g;
+		p--;
+		if (p > -1)
+		{
+			for (int z = 0; z < t[p].size(); z++)
+				t[i] += t[p][z];
+		}
+		for (int z = j; z < j + BITS_PER_BYTE && z < r; z++)
+		{
+			t[i] += b[z];
+		}
+		for (int z = 0; z < t[i].size(); z++)
+			c += t[i][z];
+		j = j + BITS_PER_BYTE;
+		i++;
+		p = 0;
+		if (i == s)
+		{
+			t = resize(t, s);
+			g = g + 1;
+			s = s * 2;
+		}
+	}
+	debit(c, output1);
+	i = 0, g = 4, s = 16;
+	delete[] t;
+	j=r;
+	t=new string[s];
+	while (j < b.size())
+	{
+		if (b.size() - j < g)
+			break;
+		for (int z = 0, k = 1; z < g; z++)
+		{
+			int g = b[j + z] - '0';
+			p = p + g * k;
+			k = k * 2;
+		}
+		j = j + g;
+		p--;
+		if (p > -1)
+		{
+			for (int z = 0; z < t[p].size(); z++)
+				t[i] += t[p][z];
+		}
+
+		for (int z = j; z < j + BITS_PER_BYTE && z < b.size(); z++)
+		{
+			t[i] += b[z];
+		}
+		for (int z = 0; z < t[i].size(); z++)
+			h += t[i][z];
+		j = j + BITS_PER_BYTE;
+		i++;
+		p = 0;
+		if (i == s)
+		{
+			t = resize(t, s);
+			g = g + 1;
+			s = s * 2;
+		}
+	}
+	debit(h, output2);
+}
+string archive::bit(string input)
+{
+	int i = 0;
+	char c;
+	string buffer = "";
+	cout << input << endl;
 	ifstream open(input);
-	open.eof();
+	open.get(c);
+	while (!open.eof())
+	{
+		i++;
+		buffer += bits_in_byte(byte(c)).to_string();
+		// cout << i << endl;
+		open.get(c);
+	}
 	open.close();
-
-	ofstream write(output);
-
-	write.close();
+	return buffer;
 }
-void archive::unpack(string input, string output)
+void archive::debit(string bitel, string output)
 {
-	ifstream open(input);
-
-	open.close();
-
-	ofstream write(output);
-	write << "kyky";
-	write.close();
+	while (bitel.size() % BITS_PER_BYTE != 0)
+		bitel += '0';
+	ofstream file(output, ios::binary);
+	int k = bitel.size();
+	for (int i = 0; i < k; i += BITS_PER_BYTE)
+	{
+		byte b = bits_in_byte(bitel.substr(i, BITS_PER_BYTE)).to_ulong();
+		file << b;
+	}
 }
-
-int main()
+string* archive::resize(string *f, int d)
+{
+	cout << "new size: " << d * 2 << endl;
+	string *t = new string[2 * d];
+	for (int i = 0; i < d; i++)
+		t[i] = f[i];
+	delete[] f;
+	return t;
+}
+int main(int argc, char const *argv[])
 {
 	archive A;
-	string zip, input, output;
-	cin >> zip >> input >> output;
-	A.take(zip, input, output);
+	cout << argc << endl;
+	cout << argv[0] << endl;
+	cout << argv[1] << endl;
+	if (argc < 4)
+	{
+		cout << "have not enought parameters..." << endl;
+		return 0;
+	}
+	string parameter(argv[1]), input(argv[2]), output1(argv[3]), output2(argv[4]);
+	cout << parameter << " " << input << " " << output1 << " " << output2 << endl;
+	A.take(parameter, input, output1, output2);
+	return 0;
 }
